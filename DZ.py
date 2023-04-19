@@ -191,21 +191,20 @@ def student_rating(student_list, course_name, grades_st_list):
     for stud in student_list:
         if stud.courses_in_progress == [course_name]:
             count_all.append(stud.srgr())
-    return sum(student_list.srgr()) / len(count_all)
+    return sum([stud.srgr() for stud in student_list if stud.courses_in_progress == [course_name]]) / len(count_all)
 
 
 def lecturer_rating(lecturer_list, course_name):
     sum_all = 0
     count_all = []
     for lect in lecturer_list:
-        if lect.courses_attached == [course_name]:
-            sum_all += len(lecturer_list[lect])
-            count_all.extend(lect)
-    return sum(count_all) / max(len(count_all))
-
+        if course_name in lect.courses_attached and lect.grades.get(course_name):
+            sum_all += sum(lect.grades[course_name])
+            count_all.extend(lect.grades[course_name])
+    return sum_all / len(count_all)
 
 print(
-    f"Средняя оценка для всех студентов по курсу {'Python'}: {student_rating(student_list, 'Python', grades_st_list)}")
+    f"Средняя оценка для всех студентов по курсу {'Python'}: {student_rating(student_list, 'Python', 'grades_st_list')}")
 print()
 
 print(f"Средняя оценка для всех лекторов по курсу {'Python'}: {lecturer_rating(lecturer_list, 'Python')}")
